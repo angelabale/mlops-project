@@ -1,4 +1,5 @@
 import pandas as pd
+from pathlib import Path
 from src.data.load_data import load_data
 
 def preprocess_data():
@@ -23,9 +24,22 @@ def preprocess_data():
     for col in categorical_cols:
         df[col] = df[col].astype(str).str.strip()
     
+    # Remplissage des valeurs numériques manquantes par la médiane
+    for col in ['Year', 'Engine Size', 'Mileage']:
+        df[col] = df[col].fillna(df[col].median())
+    
+    # Créer le dossier processed s'il n'existe pas
+    processed_path = Path("data/processed")
+    processed_path.mkdir(parents=True, exist_ok=True)
+    
+    # Sauvegarder le fichier propre
+    df.to_csv(processed_path / "car_price_cleaned.csv", index=False)
+    
     print(f"Nettoyage terminé.")
+    print(f"✅ Fichier sauvegardé dans : {processed_path / 'car_price_cleaned.csv'}")
     print(f"Lignes avant: {initial_shape[0]} ; \n Lignes après: {df.shape[0]}")
     return df
+
 
 
 if __name__ == "__main__":
