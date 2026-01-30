@@ -29,15 +29,19 @@ The final task definition may evolve during the project.
 The dataset used in this project comes from:  
 **https://www.kaggle.com/datasets/nalisha/car-price-prediction-dataset/data**
 
-Example:
-- Public dataset from Kaggle / UCI / Open Data portal  
-- Contains structured tabular data  
-- Used for supervised learning  
-
 A brief description of the dataset:
-- Number of samples: TBD  
-- Features: TBD  
-- Target variable: TBD  
+- Number of samples: 2500 
+- Features: 
+    - Car ID
+    - Brand
+    - Yearh
+    - Engine Size
+    - Fuel Type
+    - Transmission
+    - Mileage
+    - Condition
+    - Model
+- Target variable: Price
 
 ## Project structure 
 
@@ -55,6 +59,25 @@ mlops-project/
 
 ## How to Run
 
+Synchronisation :
 ```bash
 uv sync
 ```
+
+Preprocessing:
+```bash
+uv run python -m src.data.preprocess
+```
+
+Training:
+- Default: max_year = 2010, n_estimator = 50
+```bash
+uv run python src/train.py
+```
+
+- Example:
+```bash
+uv run python src/train.py --max-year 2015
+uv run python src/train.py --max-year 2015 --n-trees 20
+```
+
