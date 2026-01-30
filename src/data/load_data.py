@@ -1,50 +1,68 @@
 import pandas as pd
+import kagglehub
+import shutil
+import os
 from pathlib import Path
 
-def load_data(file_name="car_price_prediction_with_missing.csv"):
-    """
-    Charger le dataset et appliquer le nettoyage
-    
-    :param file_name: Description
-    """
-    #On trouve le chemin du ficheir actuel
-    current_file = Path(__file__).resolve()
+def load_data():
+    # Définition des chemins
+    project_root = Path(__file__).parent.parent.parent
+    raw_data_dir = project_root / "data" / "raw"
+    file_name = "car_price_prediction_with_missing.csv"
+    target_path = raw_data_dir / file_name
 
-    #on remonte jusqu'a la racine
-    project_root=current_file.parent.parent.parent
+    # 1. Créer le dossier data/raw s'il n'existe pas
+    raw_data_dir.mkdir(parents=True, exist_ok=True)
 
-    #on construit le chemin vers le CSV
-    data_path=project_root/"data"/"raw"/file_name
+    # 2. Télécharger si le fichier n'est pas là
+    if not target_path.exists():
+        print("Téléchargement depuis Kaggle via kagglehub...")
+        # Télécharge (retourne le chemin du dossier temporaire)
+        downloaded_path = kagglehub.dataset_download("nalisha/car-price-prediction-dataset")
+        
+        # Trouver le fichier .csv dans le dossier téléchargé
+        # (On cherche n'importe quel .csv si le nom change un peu)
+        source_files = list(Path(downloaded_path).glob("*.csv"))
+        
+        if source_files:
+            shutil.copy(source_files[0], target_path)
+            print(f" Fichier déplacé vers : {target_path}")
+        else:
+            raise FileNotFoundError("Aucun fichier CSV trouvé dans le téléchargement Kaggle.")
 
-    if not data_path.exists():
-        raise FileNotFoundError(f"Fichier introuvable: {data_path}")
-    
-    #chargement
-    df=pd.read_csv(data_path)
-    
-
+    # 3. Charger le DataFrame
+    df = pd.read_csv(target_path)
+    print(f"Extraction réussie : {df.shape}")
     return df
-if __name__=="__main__":
+
+if __name__ == "__main__":
     try:
-        df=load_data()
-        print(f"Extraction réussie:{df.shape}")
-        print("="*30)
-        print("Aperçue du dataset :")
-        print("="*30)
+        # Exécution du chargement
+        df = load_data()
 
-        #Dimensions
-        print(f"Dimensions:{df.shape[0]} lignes, {df.shape[1]} colonnes")
+        # --- BLOC ANALYSE DE DATA ---
+        print("\n" + "="*40)
+        print(" DIAGNOSTIC DU DATASET")
+        print("="*40)
 
-        # 2. Types de colonnes et valeurs manquantes
-        print("Infos et Valeurs Manquantes :")
+        # 1. Dimensions
+        print(f"Dimensions : {df.shape[0]} lignes, {df.shape[1]} colonnes")
+
+        # 2. Infos techniques (Types & Non-Nuls)
+        print("\n Infos et Valeurs Manquantes :")
+        print("-" * 20)
         print(df.info())
 
-        # 3. Statistiques descriptives 
+        # 3. Statistiques descriptives (Numérique + Catégoriel)
         print("\n Statistiques Descriptives :")
+        print("-" * 20)
         print(df.describe(include='all')) 
 
-        # 4. Aperçu des premières lignes
-        print("\n 5 premières lignes :")
+        # 4. Aperçu des données
+        print("\n Aperçu des 5 premières lignes :")
+        print("-" * 20)
         print(df.head())
+        print("="*40)
+
     except Exception as e:
-        print(f"Erreur lors de l'affichage:{e}")
+        print(f" Erreur lors de l'exécution : {e}")
