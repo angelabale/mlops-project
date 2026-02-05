@@ -18,3 +18,6 @@ venv/
 
 # Logs
 *.log
+
+# Ruff cache
+.ruff_cache/
