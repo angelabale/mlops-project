@@ -32,13 +32,13 @@ repos:
         files: "(src/|tests/)"
     - id: ruff
       name: ruff
-      entry: run ruff check .
+      entry: ruff check .
       language: system
       types: [python]
       files: "(src/|tests/)"
     - id: pylint
       name: pylint
-      entry: pylint
+      entry: pylint --fail-under=8
       language: system
       types: [python]
       files: "(src/|tests/)"

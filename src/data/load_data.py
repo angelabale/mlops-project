@@ -1,10 +1,25 @@
-import pandas as pd
-import kagglehub
+"""
+Module for downloading and loading the car price dataset.
+"""
+
 import shutil
-import os
 from pathlib import Path
 
+import kagglehub
+import pandas as pd
+
+
 def load_data():
+    """
+    Download the car price dataset from Kaggle if not already present,
+    then load it as a Pandas DataFrame.
+
+    Returns:
+        pd.DataFrame: Loaded dataset.
+
+    Raises:
+        FileNotFoundError: If no CSV is found in the downloaded Kaggle dataset.
+    """
     # Définition des chemins
     project_root = Path(__file__).parent.parent.parent
     raw_data_dir = project_root / "data" / "raw"
@@ -18,22 +33,27 @@ def load_data():
     if not target_path.exists():
         print("Téléchargement depuis Kaggle via kagglehub...")
         # Télécharge (retourne le chemin du dossier temporaire)
-        downloaded_path = kagglehub.dataset_download("nalisha/car-price-prediction-dataset")
-        
+        downloaded_path = kagglehub.dataset_download(
+            "nalisha/car-price-prediction-dataset"
+        )
+
         # Trouver le fichier .csv dans le dossier téléchargé
         # (On cherche n'importe quel .csv si le nom change un peu)
         source_files = list(Path(downloaded_path).glob("*.csv"))
-        
+
         if source_files:
             shutil.copy(source_files[0], target_path)
             print(f" Fichier déplacé vers : {target_path}")
         else:
-            raise FileNotFoundError("Aucun fichier CSV trouvé dans le téléchargement Kaggle.")
+            raise FileNotFoundError(
+                "Aucun fichier CSV trouvé dans le téléchargement Kaggle."
+            )
 
     # 3. Charger le DataFrame
     df = pd.read_csv(target_path)
     print(f"Extraction réussie : {df.shape}")
     return df
+
 
 if __name__ == "__main__":
     try:
@@ -41,9 +61,9 @@ if __name__ == "__main__":
         df = load_data()
 
         # --- BLOC ANALYSE DE DATA ---
-        print("\n" + "="*40)
+        print("\n" + "=" * 40)
         print(" DIAGNOSTIC DU DATASET")
-        print("="*40)
+        print("=" * 40)
 
         # 1. Dimensions
         print(f"Dimensions : {df.shape[0]} lignes, {df.shape[1]} colonnes")
@@ -56,13 +76,13 @@ if __name__ == "__main__":
         # 3. Statistiques descriptives (Numérique + Catégoriel)
         print("\n Statistiques Descriptives :")
         print("-" * 20)
-        print(df.describe(include='all')) 
+        print(df.describe(include="all"))
 
         # 4. Aperçu des données
         print("\n Aperçu des 5 premières lignes :")
         print("-" * 20)
         print(df.head())
-        print("="*40)
+        print("=" * 40)
 
     except Exception as e:
         print(f" Erreur lors de l'exécution : {e}")
