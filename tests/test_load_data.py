@@ -1,4 +1,3 @@
-from pathlib import Path
 import pandas as pd
 
 from src.data.load_data import load_data
@@ -29,9 +28,13 @@ def test_load_data_uses_existing_csv(tmp_path, monkeypatch):
 
     # Fail hard if it tries to download
     def _fail_download(*args, **kwargs):
-        raise AssertionError("dataset_download should NOT be called when file exists")
+        raise AssertionError(
+            "dataset_download should NOT be called when file exists"
+        )
 
-    monkeypatch.setattr("src.data.load_data.kagglehub.dataset_download", _fail_download)
+    monkeypatch.setattr(
+        "src.data.load_data.kagglehub.dataset_download", _fail_download
+    )
 
     df = load_data()
 
@@ -58,7 +61,9 @@ def test_load_data_downloads_when_missing(tmp_path, monkeypatch):
     downloaded_dir = tmp_path / "downloaded_dataset"
     downloaded_dir.mkdir()
     source_csv = downloaded_dir / "some_name_from_kaggle.csv"
-    pd.DataFrame({"price": [1], "year": [2000]}).to_csv(source_csv, index=False)
+    pd.DataFrame({"price": [1], "year": [2000]}).to_csv(
+        source_csv, index=False
+    )
 
     # Patch __file__ so project_root resolves correctly
     monkeypatch.setattr(
@@ -70,7 +75,9 @@ def test_load_data_downloads_when_missing(tmp_path, monkeypatch):
     def _mock_download(_dataset_name: str):
         return str(downloaded_dir)
 
-    monkeypatch.setattr("src.data.load_data.kagglehub.dataset_download", _mock_download)
+    monkeypatch.setattr(
+        "src.data.load_data.kagglehub.dataset_download", _mock_download
+    )
 
     # We let shutil.copy run normally, but we could also mock it if needed.
     df = load_data()

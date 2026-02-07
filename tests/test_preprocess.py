@@ -1,6 +1,6 @@
-import pandas as pd
 from pathlib import Path
 
+import pandas as pd
 
 from src.data.preprocess import preprocess_data
 
@@ -13,12 +13,12 @@ def test_preprocess_data_cleans_and_saves(tmp_path, monkeypatch):
     df_raw = pd.DataFrame(
         {
             "Car ID": [1, 2, 3],
-            "Price": [10000, None, 15000],          # une ligne à drop
+            "Price": [10000, None, 15000],  # une ligne à drop
             "Brand": ["Toyota", None, "BMW"],
             "Fuel Type": ["Petrol", None, "Diesel"],
             "Transmission": ["Manual", None, "Auto"],
             "Condition": ["Used", None, "New"],
-            "Model": [" Corolla ", " X5 ", None],   # strip + astype(str)
+            "Model": [" Corolla ", " X5 ", None],  # strip + astype(str)
             "Year": [2010, None, 2015],
             "Engine Size": [1.8, None, 2.0],
             "Mileage": [120000, None, 90000],
@@ -45,8 +45,8 @@ def test_preprocess_data_cleans_and_saves(tmp_path, monkeypatch):
 
     # Model doit être string et strip (pas d'espaces au début/fin)
     assert df_clean["Model"].dtype == object
-    assert all(df_clean["Model"].astype(str).str.startswith(" ") == False)
-    assert all(df_clean["Model"].astype(str).str.endswith(" ") == False)
+    assert not df_clean["Model"].astype(str).str.startswith(" ").any()
+    assert not df_clean["Model"].astype(str).str.endswith(" ").any()
 
     saved_file = Path("data/processed/car_price_cleaned.csv")
     assert saved_file.exists()

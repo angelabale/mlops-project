@@ -23,9 +23,8 @@ def preprocess_data():
 
     initial_shape = df.shape
 
-    df=df.dropna(subset=['Price'])
+    df = df.dropna(subset=["Price"])
     df = df.copy()
-
 
     for col in ["Brand", "Fuel Type", "Transmission", "Condition"]:
         df[col] = df[col].fillna(df[col].mode()[0])
