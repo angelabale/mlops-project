@@ -1,8 +1,7 @@
 import pandas as pd
 from pathlib import Path
 
-# ⚠️ adapte l'import selon ton chemin réel :
-# si ton fichier est src/data/preprocess.py :
+
 from src.data.preprocess import preprocess_data
 
 
@@ -49,7 +48,6 @@ def test_preprocess_data_cleans_and_saves(tmp_path, monkeypatch):
     assert all(df_clean["Model"].astype(str).str.startswith(" ") == False)
     assert all(df_clean["Model"].astype(str).str.endswith(" ") == False)
 
-    # 6) Vérifier que le fichier est sauvegardé
     saved_file = Path("data/processed/car_price_cleaned.csv")
     assert saved_file.exists()
 

@@ -75,7 +75,6 @@ def test_load_data_downloads_when_missing(tmp_path, monkeypatch):
     # We let shutil.copy run normally, but we could also mock it if needed.
     df = load_data()
 
-    # After load_data, the target file should exist (copied)
     assert target_csv.exists()
 
     # And dataframe should match the source csv content
