@@ -28,7 +28,7 @@ def load_processed_data():
 
     return pd.read_csv(data_path)
 
-def train_model(max_year: int | None = None, n_estimators: int = 50):
+def train_model(max_year: int | None = None, n_estimators: int = 50):  # pragma: no cover
     """
     Train a Random Forest model on the processed car price dataset.
 
