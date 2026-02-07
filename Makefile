@@ -26,8 +26,7 @@ coverage:
 # Linting and formatting
 # -----------------------------
 lint:
-	black src tests
-	isort src tests
-	flake8 src tests
-	pylint src
-
+	uv run black src tests
+	uv run isort src tests
+	uv run flake8 src tests
+	uv run pylint src
