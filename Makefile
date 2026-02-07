@@ -11,6 +11,18 @@ precommit:
 	uv run pre-commit run --all-files
 
 # -----------------------------
+# Run unit tests
+# -----------------------------
+test:
+	uv run pytest
+
+# -----------------------------
+# Run tests with coverage
+# -----------------------------
+coverage:
+	uv run pytest --cov=src --cov-report=term-missing
+
+# -----------------------------
 # Linting and formatting
 # -----------------------------
 lint:
@@ -18,3 +30,4 @@ lint:
 	isort src tests
 	flake8 src tests
 	pylint src
+
