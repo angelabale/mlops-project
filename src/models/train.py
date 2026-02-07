@@ -99,7 +99,7 @@ def train_model(max_year: int | None = None, n_estimators: int = 50):
     print(f" Mean Absolute Error (MAE): {mae:.2f}")
     print("=" * 40)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # CLI argument parsing
     parser = argparse.ArgumentParser(description="Train Car Price Model")
     parser.add_argument("--max-year", type=int, default=2010, help="Use data up to this year")
