@@ -1,12 +1,18 @@
-import pandas as pd
+"""
+Training script for the Titanic ML model.
+"""
+
 import argparse
 from pathlib import Path
-from sklearn.model_selection import train_test_split
+
+import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder
+
 
 def load_processed_data():
     """
@@ -48,17 +54,21 @@ def train_model(max_year: int | None = None, n_estimators: int = 50):  # pragma:
         df = df[df["Year"] <= max_year]
 
     # Separate target from features
-    y = df["Price"]
-    X = df.drop(columns=["Price", "Car ID"])
+    labels = df["Price"]
+    features = df.drop(columns=["Price", "Car ID"])
 
     # Identify categorical and numerical features
-    categorical_features = X.select_dtypes(include=["object"]).columns
-    numerical_features = X.select_dtypes(exclude=["object"]).columns
+    categorical_features = features.select_dtypes(include=["object"]).columns
+    numerical_features = features.select_dtypes(exclude=["object"]).columns
 
     # Preprocessing pipeline
     preprocessor = ColumnTransformer(
         transformers=[
-            ("cat", OneHotEncoder(handle_unknown="ignore"), categorical_features),
+            (
+                "cat",
+                OneHotEncoder(handle_unknown="ignore"),
+                categorical_features,
+            ),
             ("num", "passthrough", numerical_features),
         ]
     )
@@ -79,16 +89,16 @@ def train_model(max_year: int | None = None, n_estimators: int = 50):  # pragma:
     )
 
     # Train/test split
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
+    x_train_features, x_test_features, y_train_labels, y_test_labels = (
+        train_test_split(features, labels, test_size=0.2, random_state=42)
     )
 
     # Fit model
-    pipeline.fit(X_train, y_train)
+    pipeline.fit(x_train_features, y_train_labels)
 
     # Predict and evaluate
-    y_pred = pipeline.predict(X_test)
-    mae = mean_absolute_error(y_test, y_pred)
+    y_pred = pipeline.predict(x_test_features)
+    mae = mean_absolute_error(y_test_labels, y_pred)
 
     # Print results
     print("=" * 40)
@@ -102,8 +112,15 @@ def train_model(max_year: int | None = None, n_estimators: int = 50):  # pragma:
 if __name__ == "__main__":  # pragma: no cover
     # CLI argument parsing
     parser = argparse.ArgumentParser(description="Train Car Price Model")
-    parser.add_argument("--max-year", type=int, default=2010, help="Use data up to this year")
-    parser.add_argument("--n-trees", type=int, default=50, help="Number of trees in RandomForest")
+    parser.add_argument(
+        "--max-year", type=int, default=2010, help="Use data up to this year"
+    )
+    parser.add_argument(
+        "--n-trees",
+        type=int,
+        default=50,
+        help="Number of trees in RandomForest",
+    )
     args = parser.parse_args()
     # Run training with specified parameters
     train_model(max_year=args.max_year, n_estimators=args.n_trees)
