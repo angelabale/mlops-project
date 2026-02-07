@@ -21,3 +21,5 @@ venv/
 
 # Ruff cache
 .ruff_cache/
+.coverage
+htmlcov/
