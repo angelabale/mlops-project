@@ -30,3 +30,9 @@ lint:
 	uv run isort src tests
 	uv run flake8 src tests
 	uv run pylint src
+
+# -----------------------------
+# Train the model (uses default parameters defined in train.py)
+# -----------------------------
+train:
+	uv run python src/models/train.py
