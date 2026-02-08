@@ -21,5 +21,14 @@ venv/
 
 # Ruff cache
 .ruff_cache/
+
+# Coverage reports
 .coverage
 htmlcov/
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Pytest
+.pytest_cache/
