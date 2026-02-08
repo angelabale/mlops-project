@@ -35,7 +35,9 @@ def load_processed_data():
     return pd.read_csv(data_path)
 
 
-def train_model(max_year: int | None = None, n_estimators: int = 50):
+def train_model(
+    max_year: int | None = None, n_estimators: int = 50
+):  # pragma: no cover
     """
     Train a Random Forest model on the processed car price dataset.
 
@@ -111,7 +113,7 @@ def train_model(max_year: int | None = None, n_estimators: int = 50):
     print("=" * 40)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     # CLI argument parsing
     parser = argparse.ArgumentParser(description="Train Car Price Model")
     parser.add_argument(

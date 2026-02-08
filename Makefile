@@ -8,13 +8,25 @@ install:
 # Run pre-commit hooks on all files
 # -----------------------------
 precommit:
-	pre-commit run --all-files
+	uv run pre-commit run --all-files
+
+# -----------------------------
+# Run unit tests
+# -----------------------------
+test:
+	uv run pytest
+
+# -----------------------------
+# Run tests with coverage
+# -----------------------------
+coverage:
+	uv run pytest --cov=src --cov-report=term-missing
 
 # -----------------------------
 # Linting and formatting
 # -----------------------------
 lint:
-	black src tests
-	isort src tests
-	flake8 src tests
-	pylint src
+	uv run black src tests
+	uv run isort src tests
+	uv run flake8 src tests
+	uv run pylint src

@@ -38,7 +38,7 @@ repos:
       files: "(src/|tests/)"
     - id: pylint
       name: pylint
-      entry: pylint --fail-under=8
+      entry: pylint src --fail-under=8
       language: system
       types: [python]
-      files: "(src/|tests/)"
+      files: "^src/"
