@@ -32,3 +32,6 @@ mlflow.db
 
 # Pytest
 .pytest_cache/
+
+# joblib models
+model.joblib
