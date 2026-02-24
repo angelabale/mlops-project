@@ -5,6 +5,7 @@ Training script for the Car Price ML model with RandomForest and MLflow.
 import argparse
 from pathlib import Path
 
+import joblib
 import mlflow
 import mlflow.sklearn
 import numpy as np
@@ -141,6 +142,11 @@ def train_model(
             artifact_path="model",
             registered_model_name="car-price-model",
         )
+
+        # Save model locally
+        project_root = Path(__file__).parent.parent.parent
+        model_path = project_root / "model.joblib"
+        joblib.dump(pipeline, model_path)
 
         # Print results
         print("=" * 40)
