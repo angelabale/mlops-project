@@ -25,6 +25,7 @@ dev = [
     "pylint>=4.0.4",
     "ruff>=0.15.0",
     "mlflow>=3.9.0",
+    "httpx>=0.28.1",
 ]
 
 [tool.black]
