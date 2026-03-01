@@ -1,4 +1,4 @@
-# ── Stage 1: builder ──────────────────────────────────────────────────────────
+#  builder (dependencies only)
 FROM python:3.12-slim AS builder
 
 # Install UV
@@ -9,32 +9,49 @@ WORKDIR /app
 # Copy dependency files first (better layer caching)
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies into a virtual environment (no editable install yet)
-RUN uv sync --frozen --no-install-project --no-dev
+# Install dependencies into a virtual environment
+RUN uv sync --frozen --no-install-project 
 
-# ── Stage 2: runtime ──────────────────────────────────────────────────────────
-FROM python:3.12-slim AS runtime
+# trainer (runs training and produces model.joblib)
+FROM python:3.12-slim AS trainer
 
-# Install UV in runtime too (needed to run with uv)
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
 WORKDIR /app
 
-# Copy the virtual environment from builder
+# Copy venv from builder
+COPY --from=builder /app/.venv /app/.venv
+
+# Copy source code and data
+COPY src/ ./src/
+COPY data/ ./data/
+COPY pyproject.toml uv.lock ./
+
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Run training — produces model.joblib at /app/model.joblib
+RUN python -m src.models.train
+
+#  runtime
+FROM python:3.12-slim AS runtime
+
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
+WORKDIR /app
+
+# Copy venv from builder
 COPY --from=builder /app/.venv /app/.venv
 
 # Copy source code
 COPY src/ ./src/
 COPY pyproject.toml uv.lock ./
 
-# Copy the trained model artifact
-# Make sure model.joblib is present at the project root before building
-COPY model.joblib ./model.joblib
+# Copy the trained model from trainer stage (no local file needed!)
+COPY --from=trainer /app/model.joblib ./model.joblib
 
 # Expose FastAPI port
 EXPOSE 8000
 
-# Use the venv's Python directly
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Run the API

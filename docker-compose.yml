@@ -7,11 +7,6 @@ services:
     container_name: car-price-api
     ports:
       - "8000:8000"
-    volumes:
-      # Hot-reload during development: mount source code
-      - ./src:/app/src
-      # Mount model artifact (useful if you retrain without rebuilding the image)
-      - ./model.joblib:/app/model.joblib:ro
     environment:
       - PYTHONUNBUFFERED=1
     healthcheck:
