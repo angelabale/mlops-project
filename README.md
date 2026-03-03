@@ -8,7 +8,11 @@ The goal is to design and implement an end-to-end machine learning pipeline foll
 - Version control
 - Code quality and testing
 - Experiment tracking
-- Deployment
+- CI/CD automation
+- Containerization
+- Model serving with FastAPI
+
+The emphasis of this project is engineering quality and reliability rather than model complexity.
 
 ### Checkpoint 1 (Completed)
 - Set up a clean project structure
@@ -22,21 +26,41 @@ The goal is to design and implement an end-to-end machine learning pipeline foll
 - Track experiments with MLflow (parameters, metrics, model artifacts)
 - Maintain a clear and reproducible project structure
 
+### Checkpoint 3 (Completed): 
+- FastAPI application exposing prediction endpoint
+- Clear request/response schema
+- Dockerized application (training + inference)
+- CI pipeline including lint, tests, coverage and Docker build
+- Application runnable via Docker container
+- Basic API tests implemented
+
+### Checkpoint 4 (Ongoing): 
+- Monitoring
+- final report
+- demo video
+
 ## Task definition
 
-The objective is to build a supervised learning regression model predicting car prices.
+We aim to build a supervised regression model that predicts car prices based on structured features.
 
-The model will:
-- Load and preprocess the dataset
-- Engineer simple features (e.g. car age)
-- Encode categorical variables
-- Train a RandomForestRegressor with hyperparameters
-- Evaluate performance using MAE, RMSE and R² score
-- Log experiments to MLflow with clear naming conventions
+## Machine Learning Pipeline
 
-The task and model complexity will remain simple initially, with the goal of emphasizing engineering quality and reproducibility rather than model performance.
+The pipeline:
 
-The final task definition may evolve during the project.
+1. Loads and preprocesses raw data
+2. Engineers features (e.g., car age)
+3. Encodes categorical variables
+4. Trains a `RandomForestRegressor`
+5. Evaluates performance using:
+   - MAE
+   - RMSE
+   - R²
+6. Logs experiments to MLflow:
+   - Parameters
+   - Metrics
+   - Model artifacts
+
+---
 
 ## Data Source
 
@@ -63,17 +87,45 @@ A brief description of the dataset:
 ```text
 mlops-project/
 ├── data/
-    ├── processed/
-    ├── raw/
-├── src/            # Source code
-    ├── data/
-    ├── models/
-├── tests/          # Unit tests
+│   ├── processed/
+│   └── raw/
+├── src/
+│   ├── data/
+│   ├── models/
+│   └── api/
+├── tests/
+├── Dockerfile
+├── docker-compose.yml
 ├── Makefile
-├── README.md
 ├── pyproject.toml
 ├── uv.lock
+├── .github/workflows/ci.yml
+└── README.md
 ```
+
+## System Architecture
+
+The system follows a modular MLOps architecture:
+
+1. Data Layer
+   - Raw data stored in `data/raw`
+   - Processed data stored in `data/processed`
+
+2. Training Layer
+   - Preprocessing module
+   - Training module
+   - MLflow experiment tracking
+
+3. Serving Layer
+   - FastAPI application
+   - Model loaded from saved artifact
+   - REST API endpoint for inference
+
+4. Infrastructure Layer
+   - Docker containerization
+   - GitHub Actions CI pipeline
+   - Automated build validation
+
 
 ## How to Run
 
@@ -120,4 +172,26 @@ make lint
 ### 7. Run pre-commit hooks
 ```bash
 make precommit
+```
+
+## Model Serving (FastAPI)
+
+The trained model is served through a FastAPI application exposing a `/predict` endpoint.
+
+### Run API locally
+
+```bash
+uv run uvicorn src.app.api:app --reload --port 8000
+
+Swagger UI (API documentation):
+
+http://127.0.0.1:8000/docs
+```
+
+## Run with Docker Compose
+
+Build and start the application:
+
+```bash
+docker compose up --build
 ```
