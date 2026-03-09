@@ -20,7 +20,7 @@ The emphasis of this project is engineering quality and reliability rather than 
 - Implemented basic data loading and preprocessing
 - Ran a first baseline training pipeline
 
-### Checkpoint 2 (Current)
+### Checkpoint 2 (Completed)
 - Implement pre-commit hooks for code quality
 - Write unit tests covering ≥60% of the code
 - Track experiments with MLflow (parameters, metrics, model artifacts)
@@ -126,6 +126,65 @@ The system follows a modular MLOps architecture:
    - GitHub Actions CI pipeline
    - Automated build validation
 
+## MLOps Practices
+This project integrates the following MLOps practices:
+
+- **UV**: Python environment and dependency management, ensuring reproducibility across all machines
+- **Pre-commit hooks**: Automated code quality checks (linting, formatting) before each commit
+- **MLflow**: Experiment tracking with logged parameters, metrics and model artifacts. Each run is named and comparable via the MLflow UI
+- **Docker**: The full application (training + inference) is containerized for portability and reproducibility
+- **GitHub Actions CI**: Automated pipeline triggered on each push — runs lint, tests, coverage check and Docker build
+
+
+
+## Monitoring & Reliability
+
+The API exposes two monitoring endpoints:
+
+- `GET /health` — Returns the API status and confirms the model is loaded
+- `GET /metrics` — Returns runtime statistics:
+  - Total number of requests received
+  - Total number of successful predictions
+  - Total number of errors
+  - Average prediction latency (in seconds)
+
+Application logs are handled via Python's `logging` module. All prediction requests and errors are logged at INFO/ERROR level and visible via:
+```bash
+docker build
+```
+
+
+
+
+
+## Limitations & Future Work
+
+**Current limitations:**
+- The dataset is small (2,500 samples), which limits model generalization
+- The `RandomForestRegressor` is a strong baseline but not optimized for production
+- Monitoring is in-memory only — metrics reset on each container restart
+- No authentication or rate limiting on the API
+
+**Future work:**
+- Integrate  Grafana for persistent dashboards
+- Add a model retraining pipeline triggered by data drift detection
+- Expand the dataset and experiment with more advanced models 
+- Add input validation and more robust error handling
+
+
+  
+## Team Collaboration
+
+ Collaboration was managed through GitHub using branches and pull requests, with each PR reviewed before 
+merging into main.
+Tasks were distributed across the team throughout the project, with each member 
+contributing to different parts of the pipeline — from data processing and model 
+training to API development, containerization and monitoring. 
+All team members stayed involved in the overall project and maintained a shared understanding of 
+every component.
+
+Git commit history reflects active and balanced participation from all contributors.
+
 
 ## How to Run
 
@@ -195,3 +254,6 @@ Build and start the application:
 ```bash
 docker compose up --build
 ```
+
+
+## Video Link
