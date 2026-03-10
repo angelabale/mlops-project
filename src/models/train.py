@@ -136,6 +136,14 @@ def train_model(
         mlflow.log_metric("rmse", rmse)
         mlflow.log_metric("r2", r2)
 
+        # Save reference data for drift monitoring
+        project_root = Path(__file__).parent.parent.parent
+        artifacts_dir = project_root / "artifacts"
+        artifacts_dir.mkdir(parents=True, exist_ok=True)
+        reference_path = artifacts_dir / "reference_data.csv"
+        x_train_features.to_csv(reference_path, index=False)
+        mlflow.log_artifact(str(reference_path), artifact_path="monitoring")
+
         # Log model
         mlflow.sklearn.log_model(
             pipeline,
