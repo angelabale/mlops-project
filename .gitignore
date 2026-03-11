@@ -35,3 +35,9 @@ mlflow.db
 
 # joblib models
 model.joblib
+
+#locally data
+artifacts/production_samples.csv
+
+# Environment variables
+.env
