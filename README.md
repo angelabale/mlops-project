@@ -15,6 +15,8 @@ The goal is to design and implement an end-to-end machine learning pipeline foll
 
 The emphasis of this project is engineering quality and reliability rather than model complexity.
 
+## Checkpoint Completed
+
 ### Checkpoint 1 (Completed)
 - Set up a clean project structure
 - Managed the Python environment with UV
@@ -40,12 +42,12 @@ The emphasis of this project is engineering quality and reliability rather than 
 - Data drift detection using KS test on production vs reference data
 - Reference data saved as MLflow artifact on each training run
 - Production predictions logged to MLflow
-- Final project report
-- Demo video
+- CD pipeline to push car-price-app:latest automatically
+- Final project report & demo video
 
 ## Task definition
 
-We aim to build a supervised regression model that predicts car prices based on structured features.
+Predict car prices based on structured features using a supervised regression model.
 
 ## Machine Learning Pipeline
 
@@ -64,8 +66,6 @@ The pipeline:
    - Metrics
    - Model artifacts
 7. Saves reference data as MLflow artifact for drift monitoring
-
----
 
 ## Data Source
 
@@ -92,7 +92,8 @@ A brief description of the dataset:
 ```text
 mlops-project/
 ├── .github/workflows/
-│   └── ci.yml
+│   └── cd-docker.yml
+│   └── ci-code.yml
 ├── artifacts/
 │   └── reference_data.csv
 ├── data/
@@ -111,6 +112,7 @@ mlops-project/
 │   ├── test_load_data.py
 │   ├── test_preprocess.py
 │   └── test_train.py
+├── .pre-commit-config.yaml
 ├── Dockerfile
 ├── docker-compose.yml
 ├── Makefile
@@ -127,7 +129,7 @@ The system follows a modular MLOps architecture:
 2. **Training Layer** — Preprocessing, training, MLflow experiment tracking, reference data export
 3. **Serving Layer** — FastAPI REST API for inference, model loaded from `model.joblib`
 4. **Monitoring Layer** — Streamlit dashboard for drift detection, experiment comparison, model lifecycle
-5. **Infrastructure Layer** — Docker containerization, GitHub Actions CI pipeline
+5. **Infrastructure Layer** — Docker containerization, GitHub Actions CI/CD
 
 ## MLOps Practices
 This project integrates the following MLOps practices:
@@ -136,7 +138,7 @@ This project integrates the following MLOps practices:
 - **Pre-commit hooks**: Automated code quality checks (linting, formatting) before each commit
 - **MLflow**: Experiment tracking with logged parameters, metrics and model artifacts. Each run is named and comparable via the MLflow UI
 - **Docker**: The full application (training + inference) is containerized for portability and reproducibility
-- **GitHub Actions CI**: Automated pipeline triggered on each push — runs lint, tests, coverage check and Docker build
+- **GitHub Actions CI/CD**: Automated pipeline triggered on each push — runs lint, tests, coverage check, Docker build and push
 - **Streamlit**: Interactive dashboard for model validation, experiment history, drift monitoring and model lifecycle management
 
 ## Monitoring & Reliability
@@ -273,5 +275,15 @@ curl -X POST http://127.0.0.1:8000/predict \
 docker compose up --build
 ```
 
+## GitHub Actions CI/CD
 
-## Video Link
+This project uses GitHub Actions to automate testing, code quality checks, Docker builds and pushes:
+
+- **CI Pipeline (`ci-code.yml`)**
+  - Runs on: `push` and `pull_request` events on `main`
+  - Steps: linting, dependency installation, preprocessing & training, unit & API tests, coverage check
+
+- **CD Pipeline (`cd-docker.yml`)**
+  - Runs on: `push` to `main` branch
+  - Steps: builds Docker image `car-price-app:latest` and pushes to Docker Hub
+  - Requires secrets: `DOCKER_USERNAME` and `DOCKER_PASSWORD`
