@@ -2,7 +2,7 @@ name: CI — Code Quality & Tests
 
 on:
   push:
-    branches: [ main, feature/docker-cd ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
